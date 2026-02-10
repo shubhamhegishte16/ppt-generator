@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project PPT Generator</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -38,9 +34,7 @@
             font-weight: bold;
         }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+        .form-group { margin-bottom: 20px; }
 
         label {
             display: block;
@@ -49,8 +43,7 @@
             font-weight: 500;
         }
 
-        input[type="text"],
-        textarea {
+        input[type="text"], textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
@@ -59,10 +52,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
+        textarea { resize: vertical; min-height: 80px; }
 
         input[type="file"] {
             width: 100%;
@@ -72,11 +62,7 @@
             font-size: 14px;
         }
 
-        .file-info {
-            margin-top: 5px;
-            font-size: 12px;
-            color: #666;
-        }
+        .file-info { margin-top: 5px; font-size: 12px; color: #666; }
 
         button {
             width: 100%;
@@ -91,175 +77,170 @@
             margin-top: 20px;
         }
 
-        button:hover {
-            background-color: #45a049;
-        }
+        button:hover { background-color: #45a049; }
+        button:disabled { background-color: #cccccc; cursor: not-allowed; }
 
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-
-        .error {
-            color: red;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-
-        .success {
-            color: green;
-            font-size: 14px;
-            margin-top: 10px;
-            text-align: center;
-        }
+        .error { color: red; font-size: 12px; margin-top: 5px; }
+        .success { color: green; font-size: 14px; margin-top: 10px; text-align: center; }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>Project PPT Generator</h1>
-        <form id="pptForm" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="projectTitle">Project Title</label>
-                <input type="text" id="projectTitle" name="projectTitle" required>
-            </div>
+<div class="container">
+    <h1>Project PPT Generator</h1>
+<form id="pptForm" action="/generate" method="POST" enctype="multipart/form-data">
 
-            <div class="form-group">
-                <label for="projectDomain">Project Domain</label>
-                <input type="text" id="projectDomain" name="projectDomain" required>
-            </div>
+        <div class="form-group">
+            <label>Project Title</label>
+            <input type="text" name="projectTitle" required>
+        </div>
 
-            <div class="form-group">
-                <label for="guideName">Guide Name</label>
-                <input type="text" id="guideName" name="guideName" required>
-            </div>
+        <div class="form-group">
+            <label>Project Domain</label>
+            <input type="text" name="projectDomain" required>
+        </div>
 
-            <div class="form-group">
-                <label for="applications">Applications</label>
-                <textarea id="applications" name="applications" required></textarea>
-            </div>
+        <div class="form-group">
+            <label>Guide Name</label>
+            <input type="text" name="guideName" required>
+        </div>
 
-            <div class="form-group">
-                <label for="briefIdea">Brief Idea of Project</label>
-                <textarea id="briefIdea" name="briefIdea" required></textarea>
-            </div>
+      <div class="form-group">
+    <label>Application 1</label>
+    <input type="text" name="application1">
+</div>
 
-            <div class="form-group">
-                <label for="student1">Student 1</label>
-                <input type="text" id="student1" name="student1" required>
-            </div>
+<div class="form-group">
+    <label>Application 2</label>
+    <input type="text" name="application2">
+</div>
 
-            <div class="form-group">
-                <label for="student2">Student 2</label>
-                <input type="text" id="student2" name="student2" required>
-            </div>
+<div class="form-group">
+    <label>Application 3</label>
+    <input type="text" name="application3">
+</div>
 
-            <div class="form-group">
-                <label for="student3">Student 3 (optional)</label>
-                <input type="text" id="student3" name="student3">
-            </div>
+<div class="form-group">
+    <label>Application 4</label>
+    <input type="text" name="application4">
+</div>
 
-            <div class="form-group">
-                <label for="greenAreaPhoto">Green Area Photo:</label>
-                <input type="file" id="greenAreaPhoto" name="greenAreaPhoto" accept="image/*" required>
-                <div class="file-info" id="greenAreaInfo">No file chosen</div>
-            </div>
 
-            <div class="form-group">
-                <label for="projectScreenshots">Project Screenshots (exactly 2-3):</label>
-                <input type="file" id="projectScreenshots" name="projectScreenshots" accept="image/*" multiple required>
-                <div class="file-info" id="screenshotsInfo">No file chosen</div>
-                <div class="error" id="screenshotsError"></div>
-            </div>
+        <div class="form-group">
+            <label>Brief Idea of Project (Max 100 words)</label>
+            <textarea name="briefIdea" id="briefIdea" required></textarea>
+            <div class="error" id="briefError"></div>
+        </div>
 
-            <button type="submit" id="generateBtn">Generate PPT</button>
-            <div id="message"></div>
-        </form>
-    </div>
+        <div class="form-group">
+            <label>Student 1</label>
+            <input type="text" name="student1" required>
+        </div>
 
-    <script>
-        const form = document.getElementById('pptForm');
-        const greenAreaPhoto = document.getElementById('greenAreaPhoto');
-        const projectScreenshots = document.getElementById('projectScreenshots');
-        const greenAreaInfo = document.getElementById('greenAreaInfo');
-        const screenshotsInfo = document.getElementById('screenshotsInfo');
-        const screenshotsError = document.getElementById('screenshotsError');
-        const generateBtn = document.getElementById('generateBtn');
-        const messageDiv = document.getElementById('message');
+        <div class="form-group">
+            <label>Student 2</label>
+            <input type="text" name="student2" required>
+        </div>
 
-        // Update file info display
-        greenAreaPhoto.addEventListener('change', function() {
-            if (this.files.length > 0) {
-                greenAreaInfo.textContent = this.files[0].name;
-            } else {
-                greenAreaInfo.textContent = 'No file chosen';
-            }
-        });
+        <div class="form-group">
+            <label>Student 3 (optional)</label>
+            <input type="text" name="student3">
+        </div>
 
-        projectScreenshots.addEventListener('change', function() {
-            const fileCount = this.files.length;
-            screenshotsError.textContent = '';
-            
-            if (fileCount === 0) {
-                screenshotsInfo.textContent = 'No file chosen';
-            } else if (fileCount < 2) {
-                screenshotsInfo.textContent = `${fileCount} file(s) chosen (minimum 2 required)`;
-                screenshotsError.textContent = 'Please select at least 2 screenshots';
-            } else if (fileCount > 3) {
-                screenshotsInfo.textContent = `${fileCount} file(s) chosen (maximum 3 allowed)`;
-                screenshotsError.textContent = 'Please select maximum 3 screenshots';
-            } else {
-                screenshotsInfo.textContent = `${fileCount} file(s) chosen`;
-            }
-        });
+        <div class="form-group">
+            <label>Student 4 (optional)</label>
+            <input type="text" name="student4">
+        </div>
 
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const screenshotCount = projectScreenshots.files.length;
-            if (screenshotCount < 2 || screenshotCount > 3) {
-                screenshotsError.textContent = 'Please select 2-3 screenshots';
-                return;
-            }
+        <div class="form-group">
+            <label>Green Area Photo</label>
+            <input type="file" id="greenAreaPhoto" name="greenAreaPhoto" accept="image/*" required>
+            <div class="file-info" id="greenAreaInfo">No file chosen</div>
+        </div>
 
-            const formData = new FormData(form);
-            generateBtn.disabled = true;
-            generateBtn.textContent = 'Generating...';
-            messageDiv.innerHTML = '';
+        <div class="form-group">
+            <label>Project Screenshots (1–3)</label>
+            <input type="file" id="projectScreenshots" name="projectScreenshots" accept="image/*" multiple required>
+            <div class="file-info" id="screenshotsInfo">No file chosen</div>
+            <div class="error" id="screenshotsError"></div>
+        </div>
 
-            try {
-                const response = await fetch('/generate', {
-                    method: 'POST',
-                    body: formData
-                });
+        <button type="submit" id="generateBtn">Generate PPT</button>
+        <div id="message"></div>
+    </form>
+</div>
 
-                if (response.ok) {
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'project_presentation.pptx';
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
-                    
-                    messageDiv.innerHTML = '<div class="success">PPT generated successfully! Download started.</div>';
-                    form.reset();
-                    greenAreaInfo.textContent = 'No file chosen';
-                    screenshotsInfo.textContent = 'No file chosen';
-                } else {
-                    const error = await response.text();
-                    messageDiv.innerHTML = `<div class="error">Error: ${error}</div>`;
-                }
-            } catch (error) {
-                messageDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
-            } finally {
-                generateBtn.disabled = false;
-                generateBtn.textContent = 'Generate PPT';
-            }
-        });
-    </script>
+<script>
+const form = document.getElementById('pptForm');
+const greenAreaPhoto = document.getElementById('greenAreaPhoto');
+const projectScreenshots = document.getElementById('projectScreenshots');
+const greenAreaInfo = document.getElementById('greenAreaInfo');
+const screenshotsInfo = document.getElementById('screenshotsInfo');
+const screenshotsError = document.getElementById('screenshotsError');
+const generateBtn = document.getElementById('generateBtn');
+const messageDiv = document.getElementById('message');
+const briefIdea = document.getElementById('briefIdea');
+const briefError = document.getElementById('briefError');
+
+greenAreaPhoto.addEventListener('change', () => {
+    greenAreaInfo.textContent = greenAreaPhoto.files.length ? greenAreaPhoto.files[0].name : 'No file chosen';
+});
+
+projectScreenshots.addEventListener('change', () => {
+    const count = projectScreenshots.files.length;
+    screenshotsError.textContent = '';
+    if (count === 0) screenshotsInfo.textContent = 'No file chosen';
+    else if (count > 3) {
+        screenshotsInfo.textContent = `${count} selected (max 3 allowed)`;
+        screenshotsError.textContent = 'Select maximum 3 screenshots';
+    } else screenshotsInfo.textContent = `${count} file(s) chosen`;
+});
+
+briefIdea.addEventListener('input', () => {
+    const words = briefIdea.value.trim().split(/\s+/).filter(Boolean);
+    if (words.length > 100) {
+        briefError.textContent = "Maximum 100 words allowed.";
+        briefIdea.value = words.slice(0, 100).join(" ");
+    } else briefError.textContent = "";
+});
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (projectScreenshots.files.length > 3) {
+        screenshotsError.textContent = 'Select maximum 3 screenshots';
+        return;
+    }
+
+    const formData = new FormData(form);
+    generateBtn.disabled = true;
+    generateBtn.textContent = 'Generating...';
+    messageDiv.innerHTML = '';
+
+    try {
+        const response = await fetch('/generate', { method: 'POST', body: formData });
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'project_presentation.pptx';
+            a.click();
+            window.URL.revokeObjectURL(url);
+            messageDiv.innerHTML = '<div class="success">PPT generated successfully!</div>';
+            form.reset();
+            greenAreaInfo.textContent = 'No file chosen';
+            screenshotsInfo.textContent = 'No file chosen';
+        } else {
+            const error = await response.text();
+            messageDiv.innerHTML = `<div class="error">Error: ${error}</div>`;
+        }
+    } catch (err) {
+        messageDiv.innerHTML = `<div class="error">${err.message}</div>`;
+    } finally {
+        generateBtn.disabled = false;
+        generateBtn.textContent = 'Generate PPT';
+    }
+});
+</script>
 </body>
 </html>
-
-
