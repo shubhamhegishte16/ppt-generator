@@ -28,6 +28,10 @@ def set_font_8(paragraph):
     for run in paragraph.runs:
         run.font.size = Pt(8)
         run.font.name = "Segoe UI"
+def set_font_14(paragraph):
+    for run in paragraph.runs:
+        run.font.size = Pt(14.8)
+        run.font.name = "Segoe UI"
 
 
 def replace_text_in_shape(shape, placeholder, value):
@@ -37,8 +41,12 @@ def replace_text_in_shape(shape, placeholder, value):
     for paragraph in shape.text_frame.paragraphs:
         if placeholder in paragraph.text:
             paragraph.text = paragraph.text.replace(placeholder, clean_text(value))
-            set_font_8(paragraph)
 
+            # If PROGRAM placeholder → bigger font
+            if placeholder == "{{PROGRAM_NAME}}":
+                set_font_14(paragraph)
+            else:
+                set_font_8(paragraph)
 
 # ---------- ROUTES ----------
 
@@ -51,6 +59,7 @@ def index():
 def generate_ppt():
     try:
         # ---- FORM DATA ----
+        program_name = clean_text(request.form['programName'])
         project_title = clean_text(request.form['projectTitle'])
         project_domain = clean_text(request.form['projectDomain'])
         guide_name = clean_text(request.form['guideName'])
@@ -79,7 +88,7 @@ def generate_ppt():
         screenshots = request.files.getlist('projectScreenshots')
 
         if not green_image or not allowed_file(green_image.filename):
-            return "Green area image required.", 400
+            return "Guide photo required.", 400
 
         if not (1 <= len(screenshots) <= 3):
             return "Upload 1 to 3 screenshots.", 400
@@ -93,6 +102,7 @@ def generate_ppt():
             if not shape.has_text_frame:
                 continue
 
+            replace_text_in_shape(shape, "{{PROGRAM_NAME}}", program_name)
             replace_text_in_shape(shape, "{{PROJECT_TITLE}}", project_title)
             replace_text_in_shape(shape, "{{PROJECT_DOMAIN}}", project_domain)
             replace_text_in_shape(shape, "{{GUIDE_NAME}}", guide_name)
@@ -116,7 +126,7 @@ def generate_ppt():
                 if 1.4 < w < 1.8 and 0.8 < h < 1.1:
                     screenshot_boxes.append(shape)
 
-        # ---- INSERT GREEN IMAGE ----
+        # ---- INSERT GUIDE IMAGE ----
         green_path = os.path.join(
             app.config['UPLOAD_FOLDER'],
             secure_filename(green_image.filename)
